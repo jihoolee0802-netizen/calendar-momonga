@@ -5,7 +5,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<title>Momonga Calendar</title>
+<title>MOMONGA CALENDAR</title>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -15,6 +15,16 @@
 
 <style>
 
+:root{
+--pink:#FFDDEE;
+--purple:#E9D9FF;
+--sky:#DFF4FF;
+--sky-deep:#BFE8FF;
+--yellow:#FFF0B8;
+--white:#FFFFFF;
+--text:#5B5B66;
+}
+
 *{
 margin:0;
 padding:0;
@@ -23,103 +33,107 @@ box-sizing:border-box;
 }
 
 body{
-background:#F7FAFD;
+background:#F8FBFF;
 font-family:'Pretendard',sans-serif;
-padding:24px 14px 120px;
-color:#111;
+padding:18px 14px 120px;
+color:var(--text);
 }
 
 .container{
 width:100%;
-max-width:900px;
+max-width:850px;
 margin:auto;
 }
 
 .header-card{
-background:white;
-border-radius:32px;
-padding:28px 26px;
+background:linear-gradient(
+135deg,
+#FFDDEE,
+#E9D9FF,
+#DFF4FF
+);
+
+border-radius:34px;
+padding:28px;
 margin-bottom:20px;
-border:1px solid #EDF3F8;
-box-shadow:0 10px 30px rgba(158,196,232,0.12);
+
+box-shadow:
+0 10px 30px rgba(191,232,255,0.35);
+
+border:1px solid rgba(255,255,255,0.8);
+
+position:relative;
+overflow:hidden;
 }
 
-.month-row{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
+.header-card::after{
+content:'☁️';
+position:absolute;
+right:20px;
+top:16px;
+font-size:34px;
+opacity:0.55;
 }
 
-.month-title{
-font-size:38px;
+.month{
+font-size:14px;
 font-weight:700;
-letter-spacing:-0.05em;
-background:linear-gradient(135deg,#8DB8E2,#C7DDF5);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
+letter-spacing:0.18em;
+color:#7C8AA5;
+margin-bottom:8px;
 }
 
-.month-buttons{
-display:flex;
-gap:8px;
-}
-
-.month-btn{
-width:42px;
-height:42px;
-border:none;
-border-radius:16px;
-background:#EEF5FC;
-color:#6B9BCB;
-font-size:18px;
+.title{
+font-size:34px;
 font-weight:700;
-cursor:pointer;
-transition:0.18s ease;
-}
-
-.month-btn:active{
-transform:scale(0.94);
-}
-
-.calendar-card{
-background:white;
-border-radius:32px;
-padding:24px;
-border:1px solid #EDF3F8;
-box-shadow:0 10px 30px rgba(158,196,232,0.10);
-}
-
-.weekdays{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-margin-bottom:14px;
-}
-
-.weekday{
-text-align:center;
-font-size:13px;
-font-weight:700;
-color:#A2B7CB;
-padding:10px 0;
+line-height:1.15;
+color:white;
+text-shadow:0 3px 10px rgba(0,0,0,0.08);
 }
 
 .calendar{
+background:white;
+border-radius:34px;
+padding:22px;
+
+box-shadow:
+0 10px 30px rgba(180,210,240,0.12);
+
+border:1px solid #EEF5FC;
+}
+
+.week{
 display:grid;
 grid-template-columns:repeat(7,1fr);
-gap:12px;
+margin-bottom:14px;
+gap:8px;
+}
+
+.week div{
+text-align:center;
+font-size:12px;
+font-weight:700;
+color:#9AA9BC;
+}
+
+.days{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:10px;
 }
 
 .day{
-aspect-ratio:1/1;
 background:#FBFDFF;
-border:1px solid #EEF4FA;
 border-radius:24px;
-padding:12px;
+min-height:118px;
+padding:10px;
+
+border:1px solid #EEF5FC;
+
 display:flex;
 flex-direction:column;
-gap:6px;
-cursor:pointer;
+gap:8px;
+
 transition:0.18s ease;
 position:relative;
 overflow:hidden;
@@ -127,144 +141,175 @@ overflow:hidden;
 
 .day:hover{
 transform:translateY(-2px);
-box-shadow:0 10px 24px rgba(158,196,232,0.14);
-}
-
-.day.other-month{
-opacity:0.35;
-}
-
-.day.today{
-background:#EAF4FF;
-border:1px solid #CFE4F8;
 }
 
 .day-number{
-font-size:15px;
+font-size:14px;
 font-weight:700;
-color:#6B87A3;
+color:#7D8CA3;
 }
 
-.today .day-number{
-color:#5F8FBF;
-}
-
-.stickers{
-display:flex;
-flex-direction:column;
-gap:5px;
-overflow:hidden;
-}
-
-.sticker{
-padding:6px 10px;
+.event{
+padding:8px 14px;
 border-radius:999px;
-font-size:11px;
+
+font-size:12px;
 font-weight:700;
-white-space:nowrap;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+line-height:1.3;
+
+word-break:keep-all;
+text-align:center;
+
+box-shadow:
+0 4px 10px rgba(0,0,0,0.04);
+}
+
+.event-text{
+max-width:110px;
 overflow:hidden;
 text-overflow:ellipsis;
+white-space:nowrap;
 }
 
-.editor-card{
-margin-top:18px;
-background:white;
-border-radius:30px;
-padding:24px;
-border:1px solid #EDF3F8;
-box-shadow:0 10px 30px rgba(158,196,232,0.10);
+.add-button{
+position:fixed;
+bottom:24px;
+left:50%;
+transform:translateX(-50%);
+
+width:calc(100% - 28px);
+max-width:850px;
+
+height:58px;
+
+border:none;
+border-radius:24px;
+
+background:linear-gradient(
+135deg,
+#BFE8FF,
+#E9D9FF
+);
+
+color:white;
+
+font-size:17px;
+font-weight:700;
+
+cursor:pointer;
+
+box-shadow:
+0 12px 30px rgba(191,232,255,0.35);
+
+z-index:999;
+}
+
+.overlay{
+position:fixed;
+inset:0;
+
+background:rgba(0,0,0,0.35);
+
 display:none;
-animation:fadeUp 0.25s ease;
+justify-content:center;
+align-items:flex-end;
+
+z-index:1000;
 }
 
-@keyframes fadeUp{
-from{
-opacity:0;
-transform:translateY(10px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
+.editor{
+width:100%;
+max-width:850px;
+
+background:white;
+
+border-radius:34px 34px 0 0;
+
+padding:24px 18px 40px;
+
+max-height:92vh;
+overflow:auto;
 }
 
 .editor-title{
-font-size:24px;
+font-size:28px;
 font-weight:700;
-margin-bottom:18px;
-color:#6B87A3;
+margin-bottom:20px;
+color:#7D8CA3;
 }
 
 .input{
 width:100%;
+
 border:none;
 outline:none;
-background:#F5F8FC;
-border-radius:18px;
+
+background:#F6FAFF;
+
+border-radius:20px;
+
 padding:16px;
+margin-bottom:14px;
+
 font-size:15px;
 font-family:'Pretendard',sans-serif;
-margin-bottom:12px;
+
+color:#555;
 }
 
-.color-row{
-display:flex;
-gap:10px;
-margin-bottom:18px;
-flex-wrap:wrap;
-}
-
-.color-btn{
-width:34px;
-height:34px;
-border-radius:50%;
-border:none;
-cursor:pointer;
-transition:0.15s ease;
-}
-
-.color-btn.active{
-outline:3px solid #D7E8F8;
-outline-offset:3px;
-}
-
-.submit-btn{
+.submit{
 width:100%;
-height:54px;
+height:56px;
+
 border:none;
-border-radius:18px;
-background:#9EC4E8;
+border-radius:20px;
+
+background:linear-gradient(
+135deg,
+#BFE8FF,
+#E9D9FF
+);
+
 color:white;
+
 font-size:16px;
 font-weight:700;
+
 cursor:pointer;
-box-shadow:0 10px 24px rgba(158,196,232,0.28);
 }
 
-.empty-text{
-font-size:14px;
-color:#AABCCC;
-margin-top:4px;
+.empty{
+font-size:11px;
+color:#D3DCE8;
+text-align:center;
+margin-top:auto;
+margin-bottom:auto;
 }
 
-@media (max-width:768px){
+@media (max-width:700px){
 
-.month-title{
-font-size:30px;
-}
-
-.calendar{
-gap:8px;
+.title{
+font-size:28px;
 }
 
 .day{
+min-height:100px;
+padding:8px;
 border-radius:20px;
-padding:10px;
 }
 
-.sticker{
-font-size:10px;
-padding:5px 8px;
+.event{
+font-size:11px;
+padding:7px 10px;
+}
+
+.event-text{
+max-width:82px;
 }
 
 }
@@ -279,95 +324,80 @@ padding:5px 8px;
 
 <div class="header-card">
 
-<div class="month-row">
-
-<div class="month-title" id="monthTitle">
+<div class="month">
 MAY 2026 ✦
 </div>
 
-<div class="month-buttons">
+<div class="title">
+Momonga Calendar
+</div>
+
+</div>
+
+<div class="calendar">
+
+<div class="week">
+<div>SUN</div>
+<div>MON</div>
+<div>TUE</div>
+<div>WED</div>
+<div>THU</div>
+<div>FRI</div>
+<div>SAT</div>
+</div>
+
+<div class="days" id="days"></div>
+
+</div>
+
+</div>
 
 <button
-class="month-btn"
-onclick="changeMonth(-1)"
+class="add-button"
+onclick="openEditor()"
 >
-‹
++ 일정 추가
 </button>
 
-<button
-class="month-btn"
-onclick="changeMonth(1)"
->
-›
-</button>
+<div class="overlay" id="overlay">
 
-</div>
+<div class="editor">
 
-</div>
-
-</div>
-
-<div class="calendar-card">
-
-<div class="weekdays">
-
-<div class="weekday">SUN</div>
-<div class="weekday">MON</div>
-<div class="weekday">TUE</div>
-<div class="weekday">WED</div>
-<div class="weekday">THU</div>
-<div class="weekday">FRI</div>
-<div class="weekday">SAT</div>
-
-</div>
-
-<div class="calendar" id="calendar"></div>
-
-</div>
-
-<div class="editor-card" id="editorCard">
-
-<div class="editor-title" id="editorTitle">
-2026. 05. 27 ✦
+<div class="editor-title">
+일정 추가 ✦
 </div>
 
 <input
 class="input"
-id="scheduleInput"
-placeholder="일정을 입력해줘..."
-maxlength="28"
-/>
+id="dateInput"
+type="number"
+placeholder="날짜 입력 (1~31)"
+>
 
-<div class="color-row">
+<input
+class="input"
+id="textInput"
+placeholder="일정 입력"
+>
 
-<button class="color-btn active" style="background:#9EC4E8;" data-color="#9EC4E8"></button>
-<button class="color-btn" style="background:#FFB7D5;" data-color="#FFB7D5"></button>
-<button class="color-btn" style="background:#C7B6FF;" data-color="#C7B6FF"></button>
-<button class="color-btn" style="background:#FFE08A;" data-color="#FFE08A"></button>
-<button class="color-btn" style="background:#BEE7C5;" data-color="#BEE7C5"></button>
-
-</div>
+<input
+class="input"
+id="archiveInput"
+placeholder="저장공간 이름"
+>
 
 <button
-class="submit-btn"
-onclick="saveSchedule()"
+class="submit"
+onclick="addEvent()"
 >
 저장하기
 </button>
-
-<div class="empty-text">
-짧은 일정만 기록할 수 있어 ✦
-</div>
 
 </div>
 
 </div>
 
 <script>
-
-//////////////////////////////////////////////////
-// firebase
-//////////////////////////////////////////////////
 
 const firebaseConfig = {
 apiKey: "AIzaSyCzB2yaMHzz5Y9HrcGKKgVYGcNwh24pb_Y",
@@ -382,321 +412,174 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 
-//////////////////////////////////////////////////
-// archive
-//////////////////////////////////////////////////
-
 const params =
 new URLSearchParams(location.search);
 
 const archiveId =
 params.get('archive') || 'default';
 
-//////////////////////////////////////////////////
-// state
-//////////////////////////////////////////////////
+const daysEl =
+document.getElementById('days');
 
-const calendar =
-document.getElementById('calendar');
-
-const monthTitle =
-document.getElementById('monthTitle');
-
-const editorCard =
-document.getElementById('editorCard');
-
-const editorTitle =
-document.getElementById('editorTitle');
-
-let currentDate =
-new Date();
-
-let selectedDate = null;
-
-let selectedColor = '#9EC4E8';
+const overlay =
+document.getElementById('overlay');
 
 let schedules = [];
 
-//////////////////////////////////////////////////
-// firestore realtime
-//////////////////////////////////////////////////
+const colors = [
+'#FFDDEE',
+'#E9D9FF',
+'#FFE8C7',
+'#DFF4FF',
+'#FFFFFF'
+];
 
-db.collection("calendarArchives")
+function openEditor(){
+
+overlay.style.display = 'flex';
+
+document.getElementById('archiveInput').value =
+archiveId;
+
+}
+
+overlay.addEventListener('click',(e)=>{
+
+if(e.target === overlay){
+
+overlay.style.display = 'none';
+
+}
+
+});
+
+db.collection("calendars")
 .doc(archiveId)
-.collection("schedules")
+.collection("events")
+.orderBy("createdAt","asc")
 .onSnapshot(snapshot=>{
 
-schedules =
-snapshot.docs.map(doc=>({
+schedules = snapshot.docs.map(doc=>({
+
 id:doc.id,
 ...doc.data()
+
 }));
 
 renderCalendar();
 
 });
 
-//////////////////////////////////////////////////
-// month title
-//////////////////////////////////////////////////
-
-const monthNames = [
-'JANUARY',
-'FEBRUARY',
-'MARCH',
-'APRIL',
-'MAY',
-'JUNE',
-'JULY',
-'AUGUST',
-'SEPTEMBER',
-'OCTOBER',
-'NOVEMBER',
-'DECEMBER'
-];
-
-//////////////////////////////////////////////////
-// render
-//////////////////////////////////////////////////
-
 function renderCalendar(){
 
-calendar.innerHTML = '';
+daysEl.innerHTML = '';
 
-const year =
-currentDate.getFullYear();
+const firstDay = 5;
+const totalDays = 31;
 
-const month =
-currentDate.getMonth();
+for(let i=0;i<firstDay;i++){
 
-monthTitle.textContent =
-`${monthNames[month]} ${year} ✦`;
-
-const firstDay =
-new Date(year,month,1).getDay();
-
-const lastDate =
-new Date(year,month + 1,0).getDate();
-
-const prevLastDate =
-new Date(year,month,0).getDate();
-
-const today =
-new Date();
-
-//////////////////////////////////////////////////
-// prev dates
-//////////////////////////////////////////////////
-
-for(let i=firstDay-1;i>=0;i--){
-
-createDay({
-number:prevLastDate - i,
-other:true
-});
-
-}
-
-//////////////////////////////////////////////////
-// current dates
-//////////////////////////////////////////////////
-
-for(let date=1; date<=lastDate; date++){
-
-const fullDate =
-formatDate(year,month,date);
-
-const isToday =
-today.getFullYear() === year &&
-today.getMonth() === month &&
-today.getDate() === date;
-
-const daySchedules =
-schedules.filter(
-item => item.date === fullDate
-);
-
-createDay({
-number:date,
-today:isToday,
-fullDate,
-schedules:daySchedules
-});
-
-}
-
-}
-
-//////////////////////////////////////////////////
-// create day
-//////////////////////////////////////////////////
-
-function createDay(data){
-
-const day =
+const empty =
 document.createElement('div');
 
-day.className = 'day';
+daysEl.appendChild(empty);
 
-if(data.other){
-day.classList.add('other-month');
 }
 
-if(data.today){
-day.classList.add('today');
-}
+for(let day=1; day<=totalDays; day++){
 
-let stickersHTML = '';
+const box =
+document.createElement('div');
 
-(data.schedules || []).slice(0,2).forEach(item=>{
+box.className = 'day';
 
-stickersHTML += `
+const events =
+schedules.filter(
+item => Number(item.date) === day
+);
+
+let eventsHTML = '';
+
+events.forEach((event,index)=>{
+
+eventsHTML += `
+
 <div
-class="sticker"
+class="event"
 style="
-background:${item.color}25;
-color:${item.color};
+background:${colors[index % colors.length]};
 "
 >
-${item.text}
+
+<div class="event-text">
+${event.text}
 </div>
+
+</div>
+
 `;
 
 });
 
-day.innerHTML = `
+box.innerHTML = `
 
 <div class="day-number">
-${data.number}
+${day}
 </div>
 
-<div class="stickers">
-${stickersHTML}
+${eventsHTML || `
+<div class="empty">
+✦
 </div>
+`}
 
 `;
 
-if(data.fullDate){
-
-day.onclick = ()=>{
-
-selectedDate =
-data.fullDate;
-
-editorCard.style.display = 'block';
-
-editorTitle.textContent =
-selectedDate.replaceAll('-','. ') + ' ✦';
-
-window.scrollTo({
-top:document.body.scrollHeight,
-behavior:'smooth'
-});
-
-};
+daysEl.appendChild(box);
 
 }
 
-calendar.appendChild(day);
-
 }
 
-//////////////////////////////////////////////////
-// save
-//////////////////////////////////////////////////
+async function addEvent(){
 
-async function saveSchedule(){
-
-if(!selectedDate) return;
+const date =
+document.getElementById('dateInput').value;
 
 const text =
-document.getElementById('scheduleInput')
-.value
-.trim();
+document.getElementById('textInput').value;
 
-if(!text){
+const archive =
+document.getElementById('archiveInput').value
+|| 'default';
 
-alert('일정을 입력해줘!');
+if(!date || !text){
+
+alert('날짜랑 일정을 입력해줘!');
+
 return;
 
 }
 
 await db
-.collection("calendarArchives")
-.doc(archiveId)
-.collection("schedules")
+.collection("calendars")
+.doc(archive)
+.collection("events")
 .add({
 
-date:selectedDate,
+date,
 text,
-color:selectedColor,
+
 createdAt:Date.now()
 
 });
 
-document.getElementById('scheduleInput')
-.value = '';
+overlay.style.display = 'none';
+
+document.getElementById('dateInput').value = '';
+document.getElementById('textInput').value = '';
 
 }
-
-//////////////////////////////////////////////////
-// month move
-//////////////////////////////////////////////////
-
-function changeMonth(value){
-
-currentDate.setMonth(
-currentDate.getMonth() + value
-);
-
-renderCalendar();
-
-}
-
-//////////////////////////////////////////////////
-// format
-//////////////////////////////////////////////////
-
-function formatDate(year,month,date){
-
-const mm =
-String(month + 1).padStart(2,'0');
-
-const dd =
-String(date).padStart(2,'0');
-
-return `${year}-${mm}-${dd}`;
-
-}
-
-//////////////////////////////////////////////////
-// color select
-//////////////////////////////////////////////////
-
-document
-.querySelectorAll('.color-btn')
-.forEach(btn=>{
-
-btn.addEventListener('click',()=>{
-
-document
-.querySelectorAll('.color-btn')
-.forEach(b=>b.classList.remove('active'));
-
-btn.classList.add('active');
-
-selectedColor =
-btn.dataset.color;
-
-});
-
-});
-
-//////////////////////////////////////////////////
-// start
-//////////////////////////////////////////////////
-
-renderCalendar();
 
 </script>
 
